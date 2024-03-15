@@ -23,7 +23,7 @@ export default function App() {
             } else {
               console.log('Error', error.message);
             }
-            // console.error('Error', error.message);
+            console.error('Error', error.message);
           });
         
         if (response != undefined){

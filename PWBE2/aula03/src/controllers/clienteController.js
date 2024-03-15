@@ -39,8 +39,9 @@ const clienteController = {
             const { nome, idade } = req.body;
             const result = await clienteModel.insereClientes({ nome: nome, idade: idade });
             console.log(result);
-            const clientes = await clienteModel.selecionarTodosClientes();
-            return res.json(clientes);
+            // const clientes = await clienteModel.selecionarTodosClientes();
+            // return res.json(clientes);
+            return res.json(result);
         } catch (error) {
             throw error
         }

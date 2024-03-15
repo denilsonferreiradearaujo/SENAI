@@ -2,11 +2,18 @@ import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {StyleSheet, Text, View, TouchableOpacity, TextInput, Alert, SafeAreaView } from 'react-native';
 import api from '../../services/api/api';
+import { useNavigation, useRoute } from '@react-navigation/native';
 // import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function NovoCliente () {
-    const [nome, setNome] = useState('');
-    const [idade, setIdade] = useState(0);
+
+export default function EditarCliente () {
+    const route = useRoute();   
+    const navigation = useNavigation(); 
+    
+    const [txtId, setTxtId] = useState(route.params?.id);
+    const [txtNome, setTxtNome] = useState(route.params?.nome);
+    const [txtIdade, setTxtIdade] = useState(route.params?.idade);
+
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
     
@@ -14,28 +21,28 @@ export default function NovoCliente () {
         setShowAlert(true);
     }
 
-    const salvarCliente = async () => {
+    const EditarCliente = async () => {
 
         try {
-            if(nome =='' || nome==null){
+            if(txtNome =='' || txtNome==null){
                 setAlertMessage('Preencha corretamente os campos')
                 exibeAlert()
                 return;
             }
 
-            if(isNaN(idade)){
+            if(isNaN(txtIdade)){
                 setAlertMessage('O valor Digitado para idade está incorreto!')
                 exibeAlert()
                 return;
             }
 
-            if (idade == "" || idade == null || idade < 1) {
+            if (txtIdade == "" || txtIdade == null || txtIdade < 1) {
                 setAlertMessage('Informe uma idade maior que zero')
                 exibeAlert()
                 return;
             }
         
-            const response = await api.post('/clientes', {nome:nome, idade: Number(idade) })
+            const response = await api.put(`/clientes/${txtId}`, {nome: txtNome, idade: Number(txtIdade) })
                 .catch(function (error) {
                     if (error.response){
                         console.log(error.response.data);
@@ -52,14 +59,15 @@ export default function NovoCliente () {
             });
 
         if (response != undefined) {
-            if(response.data[0].affectedRows == 1){
-                setNome('');
-                setIdade(0);
-                setAlertMessage('Cliente cadastrado com sucesso!');
+            if(response.data[0].changedRows == 1){
+                setTxtId('');
+                setTxtNome('');
+                setTxtIdade('');
+                setAlertMessage('Cliente alterado com sucesso!');
                 exibeAlert();
                 return
             }else {
-                console.log('Registro não foi inserido, verifique e tente novamente')
+                console.log('Registro não foi alterado, verifique e tente novamente')
             }
         }
 
@@ -75,23 +83,31 @@ export default function NovoCliente () {
                 <Text style={styles.title}>Preencha os campos abaixo:</Text>
             </View>
 
+            <Text>ID</Text>
+            <TextInput 
+                style={styles.caixaDeTexto}
+                value={txtId.toString()}
+                onChangeText={setTxtId}
+                readOnly
+            />
+
             <Text>Nome do cliente</Text>
             <TextInput 
                 style={styles.caixaDeTexto}
-                value={nome}
-                onChangeText={setNome}
+                value={txtNome}
+                onChangeText={setTxtNome}
             />
 
             <Text>Idade do cliente</Text>
             <TextInput 
                 style={styles.caixaDeTexto}
-                value={idade.toString()}
-                onChangeText={setIdade}
+                value={txtIdade.toString()}
+                onChangeText={setTxtIdade}
             />
 
             <TouchableOpacity
                 onPress={()=> {
-                    salvarCliente ();
+                    EditarCliente ();
                 }}
                 style={styles.alignVH}>
                 <Text>Salvar</Text>
@@ -102,9 +118,14 @@ export default function NovoCliente () {
                     'Atenção',
                     alertMessage,
                     [
-                        {text:'OK', onPress: () => setShowAlert(false)}
+                        {
+                            text:'OK', onPress: () => {setShowAlert(false),
+                            navigation.navigate('TodosClientes', { status:true });
+
+                            }
+                        }
                     ],
-                    {cancelable:false}
+                    // {cancelable:false}
                 )
             )}
 
@@ -127,7 +148,8 @@ const styles = StyleSheet.create({
         // borderColor: 'black',
         borderRadius: 5,
         padding: 5,
-        width: '80%'
+        width: '80%',
+        color: 'black',
     },
     cardTitle: {
         paddingBottom: 30,

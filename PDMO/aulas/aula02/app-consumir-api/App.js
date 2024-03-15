@@ -10,16 +10,19 @@ import Home from './src/pages/Home';
 import DetalhesCliente from './src/pages/DetalhesCliente';
 import NovoCliente from './src/pages/NovoCliente';
 import TodosClientes from './src/pages/TodosClientes';
+import EditarCliente from './src/pages/EditarCliente';
 
 export default function App() {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
         <Stack.Navigator>
+
           <Stack.Screen
             name='Home'
             component={Home}
           />
+
           <Stack.Screen
             name='DetalhesCliente'
             component={DetalhesCliente}
@@ -27,6 +30,7 @@ export default function App() {
               title: 'Detalhes Cliente'
             }}
           />
+
           <Stack.Screen
             name='NovoCliente'
             component={NovoCliente}
@@ -34,11 +38,20 @@ export default function App() {
               title: 'Novo Cliente'
             }}
           />
+
           <Stack.Screen
             name='TodosClientes'
             component={TodosClientes}
             options={{
               title: 'Exibir todos os clientes'
+            }}
+          />
+
+          <Stack.Screen
+            name='EditarCliente'
+            component={EditarCliente}
+            options={{
+              title: 'Editar cliente'
             }}
           />
 
