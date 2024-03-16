@@ -13,6 +13,7 @@ export default function TodosClientes() {
 
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
+    const [refresh, setRefresh] = useState(false);
     const [status, setStatus] = useState(false);
 
     const navegaEditar = (pId, pNome, pIdade) => {
@@ -82,15 +83,11 @@ export default function TodosClientes() {
                 });
 
             if (response != undefined) {
-                if (response.data.length > 0) {
-                    let temp = [];
-                    for (let i = 0; i < response.data.length; i++) {
-                        temp.push(response.data[i]); 
-                    }
-                    setFlatlistClientes(temp)
-                    temp = [];
+                if (response.data[0].affectedRows > 0) {
+                    setRefresh(prevState => !prevState);
                     setAlertMessage('Registro excluido com sucesso!')
                     exibeAlert();
+                    return
                 } else {
                     setAlertMessage('Nenhum registro foi localizado!')
                     exibeAlert();
@@ -115,7 +112,7 @@ export default function TodosClientes() {
     useFocusEffect(
         React.useCallback(() => {
             listarClientes();
-        }, [])
+        }, [refresh])
     );
 
     let listViewItem = (item) => {

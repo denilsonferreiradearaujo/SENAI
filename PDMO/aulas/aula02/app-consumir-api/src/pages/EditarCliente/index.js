@@ -4,6 +4,7 @@ import {StyleSheet, Text, View, TouchableOpacity, TextInput, Alert, SafeAreaView
 import api from '../../services/api/api';
 import { useNavigation, useRoute } from '@react-navigation/native';
 // import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 export default function EditarCliente () {
@@ -12,6 +13,7 @@ export default function EditarCliente () {
     
     const [txtId, setTxtId] = useState(route.params?.id);
     const [txtNome, setTxtNome] = useState(route.params?.nome);
+    // const [refresh, setRefresh] = useState(false);
     const [txtIdade, setTxtIdade] = useState(route.params?.idade);
 
     const [showAlert, setShowAlert] = useState(false);
@@ -59,13 +61,14 @@ export default function EditarCliente () {
             });
 
         if (response != undefined) {
-            if(response.data[0].changedRows == 1){
+            if(response.data[0].changedRows > 0){
+                // setRefresh(prevState => !prevState);
                 setTxtId('');
                 setTxtNome('');
                 setTxtIdade('');
                 setAlertMessage('Cliente alterado com sucesso!');
                 exibeAlert();
-                return
+                // return
             }else {
                 console.log('Registro não foi alterado, verifique e tente novamente')
             }
@@ -76,6 +79,12 @@ export default function EditarCliente () {
         }
 
     }
+
+    // useFocusEffect(
+    //     React.useCallback(() => {
+    //         EditarCliente();
+    //     }, [refresh])
+    // );
 
     return (
         <SafeAreaView style={styles.container}>
